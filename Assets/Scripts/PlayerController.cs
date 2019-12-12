@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody), typeof(BoxCollider2D))]
-public class Player : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     [System.Serializable]
     public enum JumpState
@@ -20,7 +20,7 @@ public class Player : MonoBehaviour
     float jumpForce = 5;
     LayerMask groundMask;
     // Start is called before the first frame update
-    void Awake()
+    private void Awake()
     {
         collider = GetComponent<BoxCollider2D>();
         rigidbody = GetComponent<Rigidbody2D>();
@@ -33,24 +33,23 @@ public class Player : MonoBehaviour
         groundMask = LayerMask.GetMask("Ground");
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space)){
             jumpInput = true;
         }
-
-        
     }
 
     private void FixedUpdate()
     {
+        //Jump check
         if (jumpInput)
         {
             if (Mathf.Abs(rigidbody.velocity.y) < 0.1 && jump == JumpState.Ground)
             {
                 rigidbody.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
                 jump = JumpState.Jump;
+                animator.SetBool("Jumping", true);
 
             }
             else if (jump == JumpState.Jump)
@@ -61,11 +60,14 @@ public class Player : MonoBehaviour
             }
             jumpInput = false;
         }
-
+        //Grounded check
         Vector3 pos = this.transform.position + Vector3.down * collider.size.y / 2.0f; //Position at bottom of collider
         if (Mathf.Abs(rigidbody.velocity.y) < 0.01 && Physics2D.OverlapCircle(pos, 0.05f, groundMask))
+        {
             jump = JumpState.Ground;
+            animator.SetBool("Jumping", false);
+        }
 
-        Debug.DrawLine(pos, pos + Vector3.down * 0.05f, Color.green);
+            Debug.DrawLine(pos, pos + Vector3.down * 0.05f, Color.green);
     }
 }
