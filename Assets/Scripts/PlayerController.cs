@@ -38,7 +38,8 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space)){
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
             jumpInput = true;
         }
     }
@@ -46,7 +47,7 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         //Move to target
-        if (target != null && (transform.position - target.position).sqrMagnitude > 1)
+        if (target != null && Mathf.Abs(transform.position.x - target.position.x) > 0.5f)
             transform.position += (new Vector3((target.position.x - rigidbody.position.x), 0, 0).normalized * moveSpeed * Time.fixedDeltaTime);
         //Jump check
         if (jumpInput)
@@ -85,6 +86,10 @@ public class PlayerController : MonoBehaviour
             animator.SetBool("Jumping", true);
         }
 
-         
+
+    }
+    public void Coin()
+    {
+        Debug.Log("COIN");
     }
 }
