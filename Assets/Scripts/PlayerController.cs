@@ -18,7 +18,10 @@ public class PlayerController : MonoBehaviour
     public JumpState jump = JumpState.Double;
     bool jumpInput = false;
     float jumpForce = 5;
+    float moveSpeed = 1;
     LayerMask groundMask;
+    [SerializeField]
+    Transform target;
     // Start is called before the first frame update
     private void Awake()
     {
@@ -42,6 +45,9 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        //Move to target
+        if (target != null && (transform.position - target.position).sqrMagnitude > 1)
+            transform.position += (new Vector3((target.position.x - rigidbody.position.x), 0, 0).normalized * moveSpeed * Time.fixedDeltaTime);
         //Jump check
         if (jumpInput)
         {
@@ -61,13 +67,24 @@ public class PlayerController : MonoBehaviour
             jumpInput = false;
         }
         //Grounded check
-        Vector3 pos = this.transform.position + Vector3.down * collider.size.y / 2.0f; //Position at bottom of collider
-        if (Mathf.Abs(rigidbody.velocity.y) < 0.01 && Physics2D.OverlapCircle(pos, 0.05f, groundMask))
+        bool grounded = false;
+        Vector3[] pos = new Vector3[]{
+        this.transform.position + Vector3.left * collider.bounds.extents.x + Vector3.down * collider.bounds.extents.y + Vector3.down * collider.edgeRadius, //Position at bottom of collider
+        this.transform.position + Vector3.right * collider.bounds.extents.x + Vector3.down * collider.bounds.extents.y + Vector3.down * collider.edgeRadius, //Position at bottom of collider
+        };
+        foreach (var p in pos)
+            if (Physics2D.OverlapCircle(p, 0.05f, groundMask)) grounded = true;
+        if (Mathf.Abs(rigidbody.velocity.y) < 0.01 && grounded)
         {
             jump = JumpState.Ground;
             animator.SetBool("Jumping", false);
         }
+        else if (jump == JumpState.Ground)
+        {
+            jump = JumpState.Jump;
+            animator.SetBool("Jumping", true);
+        }
 
-            Debug.DrawLine(pos, pos + Vector3.down * 0.05f, Color.green);
+         
     }
 }
