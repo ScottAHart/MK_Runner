@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(Rigidbody), typeof(BoxCollider2D))]
 public class PlayerController : MonoBehaviour
@@ -22,12 +23,18 @@ public class PlayerController : MonoBehaviour
     LayerMask groundMask;
     [SerializeField]
     Transform target;
-    // Start is called before the first frame update
+
+    UnityEvent dieEvent;
+    UnityEvent coinEvent;
+
     private void Awake()
     {
         collider = GetComponent<BoxCollider2D>();
         rigidbody = GetComponent<Rigidbody2D>();
         animator = GetComponentInChildren<Animator>();
+
+        dieEvent = new UnityEvent();
+        coinEvent = new UnityEvent();
     }
 
     private void Start()
@@ -37,12 +44,20 @@ public class PlayerController : MonoBehaviour
         if (target == null) throw new System.Exception("target null");
     }
 
+    public void SetUp(InGame gameMode)
+    {
+        coinEvent.AddListener(gameMode.CoinCollected);
+        dieEvent.AddListener(gameMode.GameOver);
+    }
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
             jumpInput = true;
         }
+        Vector2 playerPos = Camera.main.WorldToScreenPoint(transform.position + collider.bounds.extents * 1.2f); //Bound extents scaled and added to get top right of player position on the screen so theyre completely off the screen
+        if (playerPos.x < 0 || playerPos.y < 0) Die(); 
     }
 
     private void FixedUpdate()
@@ -95,5 +110,13 @@ public class PlayerController : MonoBehaviour
     public void Coin()
     {
         Debug.Log("COIN");
+        coinEvent.Invoke();
+    }
+
+
+    public void Die()
+    {
+        dieEvent.Invoke();
+        this.enabled = false;
     }
 }
