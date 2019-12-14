@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-public class InGame : MonoBehaviour, IGameMode
+public class InGame : MonoBehaviour
 {
 
     [Header("UI Elements")]
@@ -25,6 +25,9 @@ public class InGame : MonoBehaviour, IGameMode
     MovingLevel movingLevel;
     [SerializeField]
     GameObject playerTargetPos;
+    public GameObject PlayerTarget { get { return playerTargetPos; } }
+    float leftWorldTargetPos, rightWorldTargetPos;
+    int stepsBetween = 5;
     PlayerController player;
 
 
@@ -46,27 +49,23 @@ public class InGame : MonoBehaviour, IGameMode
         speed = 1.0f;
         playerPos = 4;
 
-        gameObject.SetActive(true);
+        gameObject.SetActive(true); //UI
 
         if (player == null) player = GameObject.FindObjectOfType<PlayerController>();
         player.enabled = true;
+
+        leftWorldTargetPos = Camera.main.ScreenToWorldPoint(new Vector3(-10, 0, 10)).x; //off screen
+        rightWorldTargetPos = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width / 3, 0, 0)).x;
+        playerTargetPos.transform.position = new Vector3((leftWorldTargetPos - rightWorldTargetPos) / 2, 0, 0);
 
         movingLevel.enabled = true;
         player.SetUp(this);
     }
 
-    public void End()
-    {
-        player.enabled = false;
-        movingLevel.enabled = false;
-        gameObject.SetActive(false);
-    }
-
-    // Update is called once per frame
     void Update()
     {
         timer += Time.deltaTime;
-        timeUI.text = string.Format("{0}:{1:00}", (int)timer / 60, (int)timer % 60); 
+        timeUI.text = string.Format("{0}:{1:00}", (int)timer / 60, (int)timer % 60);
 
         score += speed * Time.deltaTime;
         scoreUI.text = score.ToString("F0");
@@ -75,18 +74,34 @@ public class InGame : MonoBehaviour, IGameMode
     public void CoinCollected()
     {
         coinsCollected++;
+        if (coinsCollected % 10 == 0) MoveTarget(1);
+
         float bonusScore = 100;
         GameObject bonusUI = Instantiate<GameObject>(bonusUIprefab, bonusCanvasUI.transform);
         bonusUI.GetComponent<Text>().text = bonusScore.ToString();
         Destroy(bonusUI, 1.0f);
         score += bonusScore;
         scoreUI.text = score.ToString("F0");
-
     }
-
     public void GameOver()
     {
-        GameMachine.Instance.StartMode(endGame);
-        endGame.SetUp(score, timer, coinsCollected);
+        player.enabled = false;
+        movingLevel.enabled = false;
+        gameObject.SetActive(false);
+        endGame.Load(score, timer, coinsCollected);
+    }
+
+    public void DamageTaken(int amount)
+    {
+        MoveTarget(-amount);
+    }
+
+    private void MoveTarget(int steps)
+    {
+        float newX = playerTargetPos.transform.position.x - ((leftWorldTargetPos - rightWorldTargetPos) / stepsBetween) * steps;
+
+        newX = Mathf.Clamp(newX, leftWorldTargetPos, rightWorldTargetPos);
+
+        playerTargetPos.transform.position = new Vector3(newX, 0, 0);
     }
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-public class MainMenu : MonoBehaviour, IGameMode
+public class MainMenu : MonoBehaviour
 {
 
     [Header("UI Elements")]
@@ -14,22 +14,19 @@ public class MainMenu : MonoBehaviour, IGameMode
     [Header("Knwon GameModes")]
     [SerializeField]
     InGame inGame;
-    public void Begin()
+    public void Load()
     {
-       this.gameObject.SetActive(true);
-    }
-
-    public void End()
-    {
-        this.gameObject.SetActive(false);
+        this.gameObject.SetActive(true); //Activates UI 
     }
     private void Awake()
     {
         playButton.onClick.AddListener(Play);
+
     }
     public void Play()
     {
-        GameMachine.Instance.StartMode(inGame);
+        this.gameObject.SetActive(false);
+        inGame.Begin();
     }
 
 }

@@ -6,7 +6,7 @@ public class MovingLevel : MonoBehaviour
 {
 
     List<GameObject> platforms;
-    float moveSpeed = 1.0f;
+    float moveSpeed = 2.0f;
     // Start is called before the first frame update
     void Start()
     {

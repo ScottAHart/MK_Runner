@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-public class EndGame : MonoBehaviour, IGameMode
+public class EndGame : MonoBehaviour
 {
     [Header("UI Elements")]
     [SerializeField]
@@ -19,28 +19,18 @@ public class EndGame : MonoBehaviour, IGameMode
     [SerializeField]
     MainMenu mainMenu;
 
-    public void Begin()
-    {
-        replayButton.onClick.AddListener(Replay);
-        gameObject.SetActive(true);
-    }
-
-    public void End()
-    {
-        gameObject.SetActive(false);
-    }
-
-    public void SetUp(float score, float timer, int coinsCollected)
+    public void Load(float score, float timer, int coinsCollected)
     {
         scoreUI.text = score.ToString("F0");
         timeUI.text = string.Format("{0}:{1:00}", (int)timer / 60, (int)timer % 60);
         coinsUI.text = coinsCollected.ToString();
+        replayButton.onClick.AddListener(Replay);
+        gameObject.SetActive(true);
     }
 
     void Replay()
     {
-        SceneManager.LoadScene(0);
-        //GameMachine.Instance.StartMode(mainMenu);
+        SceneManager.LoadScene(0); //Reload game
     }
 
 }

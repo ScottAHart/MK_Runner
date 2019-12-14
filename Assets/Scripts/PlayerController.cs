@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+public class DamageEvent : UnityEvent<int>{}
 [RequireComponent(typeof(Rigidbody), typeof(BoxCollider2D))]
 public class PlayerController : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class PlayerController : MonoBehaviour
     Rigidbody2D rigidbody;
     Animator animator;
     BoxCollider2D collider;
+    SpriteRenderer renderer;
     public JumpState jump = JumpState.Double;
     bool jumpInput = false;
     float jumpForce = 5;
@@ -26,28 +28,36 @@ public class PlayerController : MonoBehaviour
 
     UnityEvent dieEvent;
     UnityEvent coinEvent;
+    DamageEvent damageEvent;
 
+    //DamageVars
+    float immuneTimeAfterHit = 1.0f;
+    float flickerTime = 0.25f;
+    float lastTimeHit = 0.0f;
     private void Awake()
     {
         collider = GetComponent<BoxCollider2D>();
         rigidbody = GetComponent<Rigidbody2D>();
         animator = GetComponentInChildren<Animator>();
+        renderer = GetComponentInChildren<SpriteRenderer>();
 
         dieEvent = new UnityEvent();
         coinEvent = new UnityEvent();
+        damageEvent = new DamageEvent();
     }
 
     private void Start()
     {
         animator.SetBool("Running", true);
         groundMask = LayerMask.GetMask("Ground");
-        if (target == null) throw new System.Exception("target null");
     }
 
     public void SetUp(InGame gameMode)
     {
         coinEvent.AddListener(gameMode.CoinCollected);
         dieEvent.AddListener(gameMode.GameOver);
+        damageEvent.AddListener(gameMode.DamageTaken);
+        target = gameMode.PlayerTarget.transform;
     }
 
     private void Update()
@@ -109,14 +119,34 @@ public class PlayerController : MonoBehaviour
     }
     public void Coin()
     {
-        Debug.Log("COIN");
         coinEvent.Invoke();
     }
-
-
     public void Die()
     {
         dieEvent.Invoke();
         this.enabled = false;
+    }
+    /// Moves the player closer to the left of the screen 
+    public void TakeDamage(int amount)
+    {
+        if (Time.time - lastTimeHit > immuneTimeAfterHit) {
+            lastTimeHit = Time.time;
+            damageEvent.Invoke(amount);
+            //animator.SetTrigger("Damage");
+            StartCoroutine(TakeDamage(immuneTimeAfterHit, flickerTime));
+        }
+    }
+
+    IEnumerator TakeDamage(float duration, float cycleTime)
+    {
+        float timer = 0;
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+            renderer.color = new Color(renderer.color.r, renderer.color.g, renderer.color.b, Mathf.PingPong(timer / cycleTime, 1));
+
+            yield return null;
+        }
+        renderer.color = new Color(renderer.color.r, renderer.color.g, renderer.color.b, 1);
     }
 }
