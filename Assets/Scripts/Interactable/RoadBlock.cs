@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+//Game Object that response to player hitting a trigger moving another object to a set position
 public class RoadBlock : MonoBehaviour
 {
 

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+//Object for insta kill trigger
 public class Lava : MonoBehaviour
 {
     private void OnTriggerEnter2D(Collider2D collision)

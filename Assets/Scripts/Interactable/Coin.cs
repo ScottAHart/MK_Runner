@@ -6,18 +6,12 @@ public class Coin : MonoBehaviour
 {
     Animator animator;
     bool collected;
-    // Start is called before the first frame update
+
     void Start()
     {
         animator = this.GetComponentInChildren<Animator>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-    
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (!collected)
@@ -26,9 +20,8 @@ public class Coin : MonoBehaviour
             {
                 collision.GetComponent<PlayerController>().Coin();
                 animator.SetTrigger("Collect");
-                Destroy(gameObject, 1);
+                Destroy(gameObject, 1); //destroy object after a second to clean up
                 collected = true;
-                //Play particle 
             }
         }
     }

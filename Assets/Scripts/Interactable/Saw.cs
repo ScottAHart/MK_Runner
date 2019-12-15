@@ -14,7 +14,6 @@ public class Saw : MonoBehaviour
     [SerializeField]
     int damage = 2;
 
-
     Vector3 startPos;
 
     float moveTimer;
@@ -27,9 +26,9 @@ public class Saw : MonoBehaviour
     private void Update()
     {
         moveTimer += Time.deltaTime;
-        transform.localPosition = Vector3.Lerp(startPos, startPos + endPoint, Mathf.PingPong(moveTimer, moveDuration)/ moveDuration);
+        transform.localPosition = Vector3.Lerp(startPos, startPos + endPoint, Mathf.PingPong(moveTimer, moveDuration)/ moveDuration); //Move saw to offset and back based off duration 
 
-        transform.Rotate(new Vector3(0, 0, rotationSpeed * Time.deltaTime));
+        transform.Rotate(new Vector3(0, 0, rotationSpeed * Time.deltaTime)); 
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {

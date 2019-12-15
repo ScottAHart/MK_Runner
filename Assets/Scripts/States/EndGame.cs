@@ -18,7 +18,7 @@ public class EndGame : MonoBehaviour
     [Header("Knwon GameModes")]
     [SerializeField]
     MainMenu mainMenu;
-
+    //Sets up UI for final screen 
     public void Load(float score, float timer, int coinsCollected)
     {
         scoreUI.text = score.ToString("F0");
@@ -27,7 +27,7 @@ public class EndGame : MonoBehaviour
         replayButton.onClick.AddListener(Replay);
         gameObject.SetActive(true);
     }
-
+    //Button click
     void Replay()
     {
         SceneManager.LoadScene(0); //Reload game

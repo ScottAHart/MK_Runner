@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 public class MainMenu : MonoBehaviour
 {
-
     [Header("UI Elements")]
     [SerializeField]
     Text title;
@@ -21,7 +20,6 @@ public class MainMenu : MonoBehaviour
     private void Awake()
     {
         playButton.onClick.AddListener(Play);
-
     }
     public void Play()
     {

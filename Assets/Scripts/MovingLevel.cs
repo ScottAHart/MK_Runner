@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MovingLevel : MonoBehaviour
 {
-    //Class for holding bounds of a level
+    //Class for holding info on loaded level
     class LevelAndBounds
     {
         public GameObject level;
@@ -27,7 +27,7 @@ public class MovingLevel : MonoBehaviour
     [SerializeField]
     float moveSpeedMin = 2.0f;
     [SerializeField]
-    int moveSpeedSteps = 5;
+    int moveSpeedSteps = 5; //Amount of steps between min and max movement speeds 
     void Start()
     {
         levels = new List<LevelAndBounds>();
@@ -79,10 +79,10 @@ public class MovingLevel : MonoBehaviour
         
         Bounds bounds = CalculateSpriteBounds(level);
         level.transform.position = new Vector3(Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, 0, 0)).x, level.transform.position.y, level.transform.position.z) //Move center to right side
-                    + Vector3.right * (level.transform.position.x - bounds.center.x)
-                    + Vector3.right * bounds.extents.x; //Offset to off screen
+                    + Vector3.right * (level.transform.position.x - bounds.center.x) //Offset bounds and transform center
+                    + Vector3.right * bounds.extents.x; //Offset extents to make sure level is off screen
 
-        bounds = CalculateSpriteBounds(level);
+        bounds = CalculateSpriteBounds(level); //recalc as level is in position
         return new LevelAndBounds(level, bounds, index);
     }
     //Calculate Bounds of a game objects sprite renderers
@@ -95,7 +95,7 @@ public class MovingLevel : MonoBehaviour
             bounds.Encapsulate(renderer.bounds);
         return bounds;
     }
-
+    //Set speed based of step (0-5) in this case 
     public int ChangeSpeed(int step)
     {
         step = Mathf.Clamp(step, 0, moveSpeedSteps);

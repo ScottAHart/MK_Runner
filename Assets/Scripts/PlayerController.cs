@@ -62,10 +62,12 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        //Input checks 
         if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
         {
             jumpInput = true;
         }
+        //Off screen checks
         Vector2 playerPos = Camera.main.WorldToScreenPoint(transform.position + collider.bounds.extents * 2f); //Bound extents scaled and added to get top right of player position on the screen so theyre completely off the screen
         if (playerPos.x < 0 || playerPos.y < 0) Die(); 
     }
@@ -81,6 +83,7 @@ public class PlayerController : MonoBehaviour
         };
         foreach (var p in pos)
             if (Physics2D.OverlapCircle(p, 0.05f, groundMask)) grounded = true;
+        //State and animations set
         if (Mathf.Abs(rigidbody.velocity.y) < 0.01 && grounded)
         {
             jump = JumpState.Ground;
@@ -94,10 +97,10 @@ public class PlayerController : MonoBehaviour
         //Move to target
         if (grounded && Mathf.Abs(transform.position.x - target.position.x) > 0.5f)
             velocity.x += Mathf.Sign(target.position.x - rigidbody.position.x) * moveSpeed * Time.fixedDeltaTime;
-        //transform.position += (new Vector3((target.position.x - rigidbody.position.x), 0, 0).normalized * moveSpeed * Time.fixedDeltaTime);
+
         velocity.x = Mathf.Clamp(velocity.x, -0.5f, 0.5f);
         rigidbody.velocity = velocity;
-        //Jump check
+        //Jump input check
         if (jumpInput)
         {
             if (grounded && jump == JumpState.Ground)
@@ -117,6 +120,7 @@ public class PlayerController : MonoBehaviour
         }
 
     }
+    //Pickup/Interaction events
     public void Coin()
     {
         coinEvent.Invoke();
@@ -126,17 +130,17 @@ public class PlayerController : MonoBehaviour
         dieEvent.Invoke();
         this.enabled = false;
     }
-    /// Moves the player closer to the left of the screen 
+    //Moves the player closer to the left of the screen on damage
     public void TakeDamage(int amount)
     {
         if (Time.time - lastTimeHit > immuneTimeAfterHit) {
             lastTimeHit = Time.time;
             damageEvent.Invoke(amount);
-            //animator.SetTrigger("Damage");
+            //Flickering effect
             StartCoroutine(TakeDamage(immuneTimeAfterHit, flickerTime));
         }
     }
-
+    //Fades the renderer alpha between 0 and 1 over cycletimes 
     IEnumerator TakeDamage(float duration, float cycleTime)
     {
         float timer = 0;
@@ -154,6 +158,5 @@ public class PlayerController : MonoBehaviour
     {
         animator.SetBool("Running", false);
         animator.SetTrigger("Dead");
-
     }
 }
