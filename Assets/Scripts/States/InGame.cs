@@ -70,7 +70,7 @@ public class InGame : MonoBehaviour
         score += speed * Time.deltaTime;
         scoreUI.text = score.ToString("F0");
     }
-
+    
     public void CoinCollected()
     {
         coinsCollected++;
@@ -78,7 +78,9 @@ public class InGame : MonoBehaviour
 
         float bonusScore = 100;
         GameObject bonusUI = Instantiate<GameObject>(bonusUIprefab, bonusCanvasUI.transform);
-        bonusUI.GetComponent<Text>().text = bonusScore.ToString();
+        Text bonusText = bonusUI.GetComponent<Text>();
+        bonusText.text = bonusScore.ToString();
+        bonusText.color = Color.black;
         Destroy(bonusUI, 1.0f);
         score += bonusScore;
         scoreUI.text = score.ToString("F0");
@@ -93,12 +95,20 @@ public class InGame : MonoBehaviour
 
     public void DamageTaken(int amount)
     {
+        float scorePenalty = -50;
+        GameObject bonusUI = Instantiate<GameObject>(bonusUIprefab, bonusCanvasUI.transform);
+        Text bonusText = bonusUI.GetComponent<Text>();
+        bonusText.text = scorePenalty.ToString();
+        bonusText.color = Color.red;
+        Destroy(bonusUI, 1.0f);
+        score -= scorePenalty;
+        scoreUI.text = score.ToString("F0");
         MoveTarget(-amount);
     }
-
+    //Moves the player target position
     private void MoveTarget(int steps)
     {
-        float newX = playerTargetPos.transform.position.x - ((leftWorldTargetPos - rightWorldTargetPos) / stepsBetween) * steps;
+        float newX = playerTargetPos.transform.position.x - ((leftWorldTargetPos - rightWorldTargetPos) / stepsBetween) * steps; //Left and right a world positions for off screen left and about 1/3 from the left 
 
         newX = Mathf.Clamp(newX, leftWorldTargetPos, rightWorldTargetPos);
 
