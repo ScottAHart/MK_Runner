@@ -54,7 +54,7 @@ public class InGame : MonoBehaviour
         if (player == null) player = GameObject.FindObjectOfType<PlayerController>();
         player.enabled = true;
 
-        leftWorldTargetPos = Camera.main.ScreenToWorldPoint(new Vector3(-10, 0, 10)).x; //off screen
+        leftWorldTargetPos = Camera.main.ScreenToWorldPoint(new Vector3(0, 0, 10)).x; //off screen
         rightWorldTargetPos = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width / 3, 0, 0)).x;
         playerTargetPos.transform.position = new Vector3((leftWorldTargetPos - rightWorldTargetPos) / 2, 0, 0);
 
@@ -65,6 +65,7 @@ public class InGame : MonoBehaviour
     void Update()
     {
         timer += Time.deltaTime;
+        
         timeUI.text = string.Format("{0}:{1:00}", (int)timer / 60, (int)timer % 60);
 
         score += speed * Time.deltaTime;
@@ -88,7 +89,6 @@ public class InGame : MonoBehaviour
     public void GameOver()
     {
         player.enabled = false;
-        movingLevel.enabled = false;
         gameObject.SetActive(false);
         endGame.Load(score, timer, coinsCollected);
     }
@@ -103,7 +103,8 @@ public class InGame : MonoBehaviour
         Destroy(bonusUI, 1.0f);
         score -= scorePenalty;
         scoreUI.text = score.ToString("F0");
-        MoveTarget(-amount);
+        if (playerTargetPos.transform.position.x == leftWorldTargetPos) player.Die(); //player is already at left most position and has been hit have them die
+        else MoveTarget(-amount);
     }
     //Moves the player target position
     private void MoveTarget(int steps)

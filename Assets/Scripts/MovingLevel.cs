@@ -9,10 +9,12 @@ public class MovingLevel : MonoBehaviour
     {
         public GameObject level;
         public Bounds bounds;
-        public LevelAndBounds(GameObject obj, Bounds bounds)
+        public int index;
+        public LevelAndBounds(GameObject obj, Bounds bounds, int prefabIndex)
         {
             this.level = obj;
             this.bounds = bounds;
+            this.index = prefabIndex;
         }
     }
     [SerializeField]
@@ -26,7 +28,7 @@ public class MovingLevel : MonoBehaviour
         //Get the current levels in the scene
         foreach (Transform t in transform)
         {
-            LevelAndBounds level = new LevelAndBounds(t.gameObject, CalculateSpriteBounds(t.gameObject));            
+            LevelAndBounds level = new LevelAndBounds(t.gameObject, CalculateSpriteBounds(t.gameObject), 0);            
             levels.Add(level);
         }
     }
@@ -62,16 +64,20 @@ public class MovingLevel : MonoBehaviour
     //Instantiate new level from prefab list, move to right side of screen and calculate bounds
     LevelAndBounds LoadNextLevel()
     {
-        int index = Random.Range(0, levelPrefabs.Length-1);
+        int index = Random.Range(0, levelPrefabs.Length);
+        //Change index if it what was last spawned (stops duplicate spawns)
+        while(index == levels[levels.Count -1].index) 
+            index = Random.Range(0, levelPrefabs.Length);
 
         GameObject level = Instantiate<GameObject>(levelPrefabs[index], this.transform);
         
         Bounds bounds = CalculateSpriteBounds(level);
         level.transform.position = new Vector3(Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, 0, 0)).x, level.transform.position.y, level.transform.position.z) //Move center to right side
+                    + Vector3.right * (level.transform.position.x - bounds.center.x)
                     + Vector3.right * bounds.extents.x; //Offset to off screen
 
         bounds = CalculateSpriteBounds(level);
-        return new LevelAndBounds(level, bounds);
+        return new LevelAndBounds(level, bounds, index);
     }
     //Calculate Bounds of a game objects sprite renderers
     Bounds CalculateSpriteBounds(GameObject level)

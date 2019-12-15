@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
     public JumpState jump = JumpState.Double;
     bool jumpInput = false;
     float jumpForce = 5;
-    float moveSpeed = 10;
+    float moveSpeed = 5;
     LayerMask groundMask;
     [SerializeField]
     Transform target;
@@ -66,7 +66,7 @@ public class PlayerController : MonoBehaviour
         {
             jumpInput = true;
         }
-        Vector2 playerPos = Camera.main.WorldToScreenPoint(transform.position + collider.bounds.extents * 1.2f); //Bound extents scaled and added to get top right of player position on the screen so theyre completely off the screen
+        Vector2 playerPos = Camera.main.WorldToScreenPoint(transform.position + collider.bounds.extents * 2f); //Bound extents scaled and added to get top right of player position on the screen so theyre completely off the screen
         if (playerPos.x < 0 || playerPos.y < 0) Die(); 
     }
 
@@ -148,5 +148,12 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
         renderer.color = new Color(renderer.color.r, renderer.color.g, renderer.color.b, 1);
+    }
+
+    private void OnDisable()
+    {
+        animator.SetBool("Running", false);
+        animator.SetTrigger("Dead");
+
     }
 }

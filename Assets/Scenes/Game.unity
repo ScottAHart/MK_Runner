@@ -1852,6 +1852,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   levelPrefabs:
   - {fileID: 1498153653688212354, guid: 09d30e2395ad4564bbdc3600dd109376, type: 3}
+  - {fileID: 180966946358501556, guid: 69511c0925b8b5e479311d57a98d927f, type: 3}
+  - {fileID: 1390789089463821541, guid: a1fe6ba573134294d9759b208de42e27, type: 3}
+  - {fileID: 6925030546560861066, guid: 1e1c0e4efca33914ca10b7d1552ccf64, type: 3}
 --- !u!4 &895777190
 Transform:
   m_ObjectHideFlags: 0
@@ -3801,7 +3804,7 @@ PrefabInstance:
     - target: {fileID: 1498153653688212365, guid: 09d30e2395ad4564bbdc3600dd109376,
         type: 3}
       propertyPath: m_RootOrder
-      value: 9
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1498153653688212365, guid: 09d30e2395ad4564bbdc3600dd109376,
         type: 3}
