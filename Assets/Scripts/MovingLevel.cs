@@ -32,6 +32,7 @@ public class MovingLevel : MonoBehaviour
     }
     void Update()
     {
+        List<LevelAndBounds> removedLevels = new List<LevelAndBounds>();
         //Move levels to the left
         foreach(var level in levels)
         {
@@ -45,16 +46,18 @@ public class MovingLevel : MonoBehaviour
                 if (Camera.main.WorldToScreenPoint(level.bounds.center + Vector3.right * level.bounds.extents.x).x < 0)
                 {
                     Destroy(levelObject);
-                    levels.Remove(level);
+                    removedLevels.Add(level);
                 }
             }
         }
         //Add new level if current level is no longer off screen
         LevelAndBounds lastLevel = levels[levels.Count - 1];
         if (Camera.main.WorldToScreenPoint(lastLevel.bounds.center + Vector3.right * lastLevel.bounds.extents.x).x < Screen.width)
-        {
             levels.Add(LoadNextLevel());
-        }
+        //Removed destroyed levels 
+        foreach (var level in removedLevels)
+            levels.Remove(level);
+
     }
     //Instantiate new level from prefab list, move to right side of screen and calculate bounds
     LevelAndBounds LoadNextLevel()
