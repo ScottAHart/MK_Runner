@@ -14,15 +14,14 @@ public class InGame : MonoBehaviour
     [SerializeField]
     GameObject bonusCanvasUI;
 
-
     [Header("Objects")]
     [SerializeField]
     GameObject bonusUIprefab;
 
-
-
     [SerializeField]
     MovingLevel movingLevel;
+    [SerializeField]
+    float levelSpeedChangeTime = 10.0f;
     [SerializeField]
     GameObject playerTargetPos;
     public GameObject PlayerTarget { get { return playerTargetPos; } }
@@ -30,8 +29,6 @@ public class InGame : MonoBehaviour
     int stepsBetween = 5;
     PlayerController player;
 
-
-    [Header("Knwon GameModes")]
     [SerializeField]
     EndGame endGame;
 
@@ -54,7 +51,7 @@ public class InGame : MonoBehaviour
         if (player == null) player = GameObject.FindObjectOfType<PlayerController>();
         player.enabled = true;
 
-        leftWorldTargetPos = Camera.main.ScreenToWorldPoint(new Vector3(0, 0, 10)).x; //off screen
+        leftWorldTargetPos = Camera.main.ScreenToWorldPoint(new Vector3(2, 0, 0)).x; //off screen
         rightWorldTargetPos = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width / 3, 0, 0)).x;
         playerTargetPos.transform.position = new Vector3((leftWorldTargetPos - rightWorldTargetPos) / 2, 0, 0);
 
@@ -65,7 +62,7 @@ public class InGame : MonoBehaviour
     void Update()
     {
         timer += Time.deltaTime;
-        
+        speed = movingLevel.ChangeSpeed((int)((timer+levelSpeedChangeTime) / levelSpeedChangeTime));//Adding levelSpeedChangeTime so it starts at 1 
         timeUI.text = string.Format("{0}:{1:00}", (int)timer / 60, (int)timer % 60);
 
         score += speed * Time.deltaTime;

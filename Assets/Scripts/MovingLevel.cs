@@ -22,6 +22,12 @@ public class MovingLevel : MonoBehaviour
     
     List<LevelAndBounds> levels; //list of currently moving levels
     float moveSpeed = 2.0f; //Speed of level movement
+    [SerializeField]
+    float moveSpeedMax = 10.0f;
+    [SerializeField]
+    float moveSpeedMin = 2.0f;
+    [SerializeField]
+    int moveSpeedSteps = 5;
     void Start()
     {
         levels = new List<LevelAndBounds>();
@@ -88,5 +94,13 @@ public class MovingLevel : MonoBehaviour
         foreach (var renderer in renderers)
             bounds.Encapsulate(renderer.bounds);
         return bounds;
+    }
+
+    public int ChangeSpeed(int step)
+    {
+        step = Mathf.Clamp(step, 0, moveSpeedSteps);
+        moveSpeed = (moveSpeedMax - moveSpeedMin) / moveSpeedSteps * step;
+        moveSpeed = Mathf.Clamp(moveSpeed, moveSpeedMin, moveSpeedMax);
+        return step;
     }
 }

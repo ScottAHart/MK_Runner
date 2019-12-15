@@ -11,6 +11,9 @@ public class Saw : MonoBehaviour
     float moveDuration = 2.0f;
     [SerializeField]
     Vector3 endPoint = new Vector3(0, 10, 0);
+    [SerializeField]
+    int damage = 2;
+
 
     Vector3 startPos;
 
@@ -32,7 +35,7 @@ public class Saw : MonoBehaviour
     {
         if(collision.tag == "Player")
         {
-            collision.GetComponent<PlayerController>().TakeDamage(10);
+            collision.GetComponent<PlayerController>().TakeDamage(damage);
         }
     }
 

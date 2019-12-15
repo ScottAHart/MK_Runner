@@ -92,10 +92,10 @@ public class PlayerController : MonoBehaviour
             animator.SetBool("Jumping", true);
         }
         //Move to target
-        if (Mathf.Abs(transform.position.x - target.position.x) > 0.5f)
+        if (grounded && Mathf.Abs(transform.position.x - target.position.x) > 0.5f)
             velocity.x += Mathf.Sign(target.position.x - rigidbody.position.x) * moveSpeed * Time.fixedDeltaTime;
         //transform.position += (new Vector3((target.position.x - rigidbody.position.x), 0, 0).normalized * moveSpeed * Time.fixedDeltaTime);
-        velocity.x = Mathf.Clamp(velocity.x, -2, 2);
+        velocity.x = Mathf.Clamp(velocity.x, -0.5f, 0.5f);
         rigidbody.velocity = velocity;
         //Jump check
         if (jumpInput)
